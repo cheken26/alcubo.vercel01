@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>alcubo³ Arquitectos</title>
+  <meta name="description" content="alcubo³ — Estudio de Arquitectura. Diseño · Arquitectura · Innovación." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* =========================================================
+       RESET & BASE
+    ========================================================= */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:    #0a0a0a;
+      --white:    #ffffff;
+      --gray-light: #f0f0f0;
+      --gray-mid:   #888888;
+      --gray-dark:  #1a1a1a;
+      --gray-card:  #111111;
+      --accent:     #e8e8e8;
+      --font-main: 'Space Grotesk', 'Inter', sans-serif;
+      --transition: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--black);
+      color: var(--white);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+    a { text-decoration: none; color: inherit; }
+
+    ul { list-style: none; }
+
+    /* =========================================================
+       SCROLLBAR
+    ========================================================= */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--black); }
+    ::-webkit-scrollbar-thumb { background: #444; border-radius: 2px; }
+
+    /* =========================================================
+       TYPOGRAPHY UTILS
+    ========================================================= */
+    .section-label {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gray-mid);
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      color: var(--white);
+    }
+
+    .section-subtitle {
+      font-size: 0.95rem;
+      color: var(--gray-mid);
+      letter-spacing: 0.1em;
+      margin-top: 0.5rem;
+    }
+
+    /* =========================================================
+       ANIMATIONS — fade-in via IntersectionObserver
+    ========================================================= */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .fade-in-delay-1 { transition-delay: 0.1s; }
+    .fade-in-delay-2 { transition-delay: 0.2s; }
+    .fade-in-delay-3 { transition-delay: 0.3s; }
+    .fade-in-delay-4 { transition-delay: 0.4s; }
+
+    /* =========================================================
+       HEADER / NAV
+    ========================================================= */
+    #header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 1.4rem 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background var(--transition), padding var(--transition), backdrop-filter var(--transition);
+    }
+
+    #header.scrolled {
+      background: rgba(10, 10, 10, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 1rem 4rem;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    /* Logo */
+    .nav-logo {
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
+    }
+    .nav-logo .logo-main {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--white);
+    }
+    .nav-logo .logo-main sup {
+      font-size: 0.6em;
+      vertical-align: super;
+    }
+    .nav-logo .logo-sub {
+      font-size: 0.55rem;
+      letter-spacing: 0.3em;
+      color: var(--gray-mid);
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    /* Desktop nav links */
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      align-items: center;
+    }
+    .nav-links a {
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gray-mid);
+      transition: color 0.3s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--white);
+      transition: width 0.3s;
+    }
+    .nav-links a:hover { color: var(--white); }
+    .nav-links a:hover::after { width: 100%; }
+
+    /* Hamburger button */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+      background: none;
+      border: none;
+      z-index: 1100;
+    }
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 1.5px;
+      background: var(--white);
+      transition: all 0.3s ease;
+      transform-origin: center;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    /* Mobile overlay menu */
+    .mobile-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: rgba(10,10,10,0.98);
+      backdrop-filter: blur(8px);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2.5rem;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .mobile-overlay.open {
+      display: flex;
+      opacity: 1;
+    }
+    .mobile-overlay a {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      opacity: 0.7;
+      transition: opacity 0.3s;
+    }
+    .mobile-overlay a:hover { opacity: 1; }
+
+    /* =========================================================
+       HERO SECTION
+    ========================================================= */
+    #hero {
+      position: relative;
+      width: 100%;
+      height: 100svh;
+      min-height: 600px;
+      display: flex;
+      align-items: flex-end;
+      padding: 0 4rem 5rem;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+    .hero-bg img {
+      object-position: center;
+    }
+    .hero-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(10,10,10,0.3) 0%,
+        rgba(10,10,10,0.5) 50%,
+        rgba(10,10,10,0.85) 100%
+      );
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 780px;
+    }
+    .hero-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .hero-label::before {
+      content: '';
+      display: block;
+      width: 40px;
+      height: 1px;
+      background: rgba(255,255,255,0.4);
+    }
+
+    .hero-title {
+      font-size: clamp(2.5rem, 6vw, 5.5rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      margin-bottom: 1.5rem;
+      color: var(--white);
+    }
+
+    .hero-sub {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.55);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 2.5rem;
+    }
+
+    .btn-hero {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--white);
+      color: var(--black);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.9rem 2rem;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .btn-hero:hover {
+      background: var(--gray-light);
+      transform: translateX(4px);
+    }
+
+    /* Scroll indicator */
+    .hero-scroll {
+      position: absolute;
+      bottom: 2.5rem;
+      right: 4rem;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0.4;
+    }
+    .hero-scroll span {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      writing-mode: vertical-rl;
+    }
+    .hero-scroll-line {
+      width: 1px;
+      height: 50px;
+      background: var(--white);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%, 100% { transform: scaleY(1); opacity: 1; }
+      50% { transform: scaleY(0.5); opacity: 0.3; }
+    }
+
+    /* =========================================================
+       SECTION WRAPPER
+    ========================================================= */
+    .section-wrapper {
+      padding: 7rem 4rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .section-header {
+      margin-bottom: 4rem;
+    }
+
+    /* =========================================================
+       PROYECTOS
+    ========================================================= */
+    #proyectos {
+      background: var(--black);
+    }
+
+    .projects-grid {
+      columns: 3;
+      column-gap: 1.2rem;
+    }
+
+    .project-card {
+      break-inside: avoid;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 1.2rem;
+      cursor: pointer;
+    }
+
+    /* Varied heights for masonry effect */
+    .project-card:nth-child(1) .project-img { height: 320px; }
+    .project-card:nth-child(2) .project-img { height: 260px; }
+    .project-card:nth-child(3) .project-img { height: 380px; }
+    .project-card:nth-child(4) .project-img { height: 280px; }
+    .project-card:nth-child(5) .project-img { height: 350px; }
+    .project-card:nth-child(6) .project-img { height: 240px; }
+    .project-card:nth-child(7) .project-img { height: 300px; }
+    .project-card:nth-child(8) .project-img { height: 360px; }
+
+    .project-img {
+      width: 100%;
+      overflow: hidden;
+      background: var(--gray-dark);
+    }
+    .project-img img {
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s var(--transition);
+    }
+
+    .project-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(10,10,10,0);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 1.5rem;
+      transition: background 0.4s;
+    }
+    .project-overlay-content {
+      transform: translateY(10px);
+      opacity: 0;
+      transition: all 0.4s;
+    }
+    .project-overlay-content h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--white);
+    }
+    .project-overlay-content span {
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+    }
+
+    .project-card:hover .project-img img { transform: scale(1.05); }
+    .project-card:hover .project-overlay { background: rgba(10,10,10,0.65); }
+    .project-card:hover .project-overlay-content { opacity: 1; transform: translateY(0); }
+
+    /* Filters */
+    .project-filters {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 3rem;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      background: none;
+      border: none;
+      font-family: var(--font-main);
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gray-mid);
+      cursor: pointer;
+      padding: 0.3rem 0;
+      border-bottom: 1px solid transparent;
+      transition: all 0.3s;
+    }
+    .filter-btn.active, .filter-btn:hover {
+      color: var(--white);
+      border-bottom-color: var(--white);
+    }
+
+    /* =========================================================
+       ESTUDIO
+    ========================================================= */
+    #estudio {
+      background: var(--black);
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .studio-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+    }
+
+    .studio-text p {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 3rem;
+    }
+
+    .studio-stats {
+      display: flex;
+      gap: 3rem;
+      flex-wrap: wrap;
+    }
+    .stat-item {}
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--white);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gray-mid);
+      margin-top: 0.4rem;
+    }
+
+    .studio-image {
+      position: relative;
+      height: 520px;
+      overflow: hidden;
+    }
+    .studio-image::before {
+      content: '';
+      position: absolute;
+      top: -20px;
+      left: -20px;
+      right: 20px;
+      bottom: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+      z-index: 1;
+      pointer-events: none;
+    }
+    .studio-image img {
+      object-position: center;
+    }
+
+    /* =========================================================
+       SERVICIOS
+    ========================================================= */
+    #servicios {
+      background: #111111;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+
+    .service-card {
+      background: var(--gray-dark);
+      border: 1px solid rgba(255,255,255,0.06);
+      padding: 2.5rem 2rem;
+      transition: border-color 0.3s, transform 0.3s;
+      cursor: default;
+    }
+    .service-card:hover {
+      border-color: rgba(255,255,255,0.3);
+      transform: translateY(-4px);
+    }
+
+    .service-icon {
+      width: 44px;
+      height: 44px;
+      margin-bottom: 1.5rem;
+      opacity: 0.8;
+    }
+
+    .service-title {
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.8rem;
+    }
+
+    .service-desc {
+      font-size: 0.85rem;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.5);
+    }
+
+    /* =========================================================
+       CONTACTO
+    ========================================================= */
+    #contacto {
+      background: var(--black);
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: start;
+    }
+
+    .contact-form-side {}
+
+    .contact-tagline {
+      font-size: clamp(1.6rem, 3vw, 2.5rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 2.5rem;
+      color: var(--white);
+    }
+
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gray-mid);
+      margin-bottom: 0.5rem;
+    }
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      background: var(--gray-dark);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--white);
+      font-family: var(--font-main);
+      font-size: 0.9rem;
+      padding: 0.85rem 1rem;
+      outline: none;
+      transition: border-color 0.3s;
+      -webkit-appearance: none;
+    }
+    .form-group input::placeholder,
+    .form-group textarea::placeholder { color: rgba(255,255,255,0.2); }
+    .form-group input:focus,
+    .form-group textarea:focus { border-color: rgba(255,255,255,0.4); }
+    .form-group textarea { resize: vertical; min-height: 120px; }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .btn-submit {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--white);
+      color: var(--black);
+      font-family: var(--font-main);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.95rem 2.2rem;
+      border: none;
+      cursor: pointer;
+      margin-top: 0.8rem;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .btn-submit:hover {
+      background: var(--gray-light);
+      transform: translateX(4px);
+    }
+
+    .form-success {
+      display: none;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 1.2rem 1.5rem;
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      color: var(--gray-light);
+    }
+
+    /* Contact info side */
+    .contact-info-side {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .contact-image {
+      height: 280px;
+      overflow: hidden;
+    }
+
+    .contact-info-items {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .contact-info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+    .contact-info-item .info-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gray-mid);
+    }
+    .contact-info-item .info-value {
+      font-size: 0.9rem;
+      color: var(--white);
+    }
+    .contact-info-item .info-value a {
+      transition: opacity 0.3s;
+    }
+    .contact-info-item .info-value a:hover { opacity: 0.6; }
+
+    /* =========================================================
+       FOOTER
+    ========================================================= */
+    footer {
+      background: var(--gray-dark);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 3.5rem 4rem;
+      text-align: center;
+    }
+
+    .footer-logo {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 2rem;
+      display: inline-block;
+    }
+    .footer-logo sup {
+      font-size: 0.55em;
+      vertical-align: super;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2.5rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .footer-links a {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gray-mid);
+      transition: color 0.3s;
+    }
+    .footer-links a:hover { color: var(--white); }
+
+    .footer-instagram {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      color: var(--gray-mid);
+      margin-bottom: 2rem;
+      transition: color 0.3s;
+    }
+    .footer-instagram:hover { color: var(--white); }
+
+    .footer-copy {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.25);
+      letter-spacing: 0.05em;
+    }
+
+    /* =========================================================
+       RESPONSIVE — MOBILE (≤768px)
+    ========================================================= */
+    @media (max-width: 768px) {
+      /* Header */
+      #header { padding: 1.2rem 1.5rem; }
+      #header.scrolled { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+
+      /* Hero */
+      #hero { padding: 0 1.5rem 4rem; align-items: flex-end; }
+      .hero-title { font-size: clamp(2rem, 10vw, 3rem); }
+      .hero-scroll { display: none; }
+
+      /* Section wrapper */
+      .section-wrapper { padding: 4.5rem 1.5rem; }
+      .section-header { margin-bottom: 2.5rem; }
+
+      /* Projects */
+      .projects-grid { columns: 1; }
+      .project-card .project-img { height: 260px !important; }
+      .project-filters { gap: 1.2rem; }
+
+      /* Studio */
+      .studio-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .studio-image { height: 280px; order: -1; }
+      .studio-image::before { display: none; }
+      .studio-stats { gap: 2rem; }
+
+      /* Services */
+      .services-grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
+      .service-card { padding: 1.5rem 1.2rem; }
+
+      /* Contact */
+      .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .form-row { grid-template-columns: 1fr; }
+      .contact-image { height: 220px; }
+
+      /* Footer */
+      footer { padding: 2.5rem 1.5rem; }
+    }
+
+    @media (max-width: 480px) {
+      .services-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =========================================================
+       HEADER
+  ========================================================= -->
+  <header id="header">
+    <a href="#hero" class="nav-logo" aria-label="alcubo³ Arquitectos">
+      <span class="logo-main">alcubo<sup>3</sup></span>
+      <span class="logo-sub">Arquitectos</span>
+    </a>
+
+    <nav class="nav-links" aria-label="Navegación principal">
+      <a href="#proyectos">Proyectos</a>
+      <a href="#estudio">Estudio</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+
+    <button class="hamburger" id="hamburgerBtn" aria-label="Abrir menú" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </header>
+
+  <!-- Mobile overlay menu -->
+  <nav class="mobile-overlay" id="mobileMenu" aria-label="Menú móvil">
+    <a href="#proyectos" class="mobile-link">Proyectos</a>
+    <a href="#estudio" class="mobile-link">Estudio</a>
+    <a href="#contacto" class="mobile-link">Contacto</a>
+  </nav>
+
+  <!-- =========================================================
+       HERO
+  ========================================================= -->
+  <section id="hero" aria-label="Inicio">
+    <div class="hero-bg">
+      <img
+        src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&q=80"
+        alt="Arquitectura minimalista moderna"
+        loading="eager"
+      />
+    </div>
+
+    <div class="hero-content">
+      <p class="hero-label fade-in">alcubo³ · Estudio de Arquitectura</p>
+      <h1 class="hero-title fade-in fade-in-delay-1">
+        Diseñando espacios<br />que cuentan historias
+      </h1>
+      <p class="hero-sub fade-in fade-in-delay-2">Diseño · Arquitectura · Innovación</p>
+      <a href="#proyectos" class="btn-hero fade-in fade-in-delay-3">
+        Ver proyectos
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+
+    <div class="hero-scroll" aria-hidden="true">
+      <span>Scroll</span>
+      <div class="hero-scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       PROYECTOS
+  ========================================================= -->
+  <section id="proyectos">
+    <div class="section-wrapper">
+      <div class="section-header fade-in">
+        <span class="section-label">Nuestro trabajo</span>
+        <h2 class="section-title">PROYECTOS</h2>
+        <p class="section-subtitle">Residencial · Comercial · Interiorismo</p>
+      </div>
+
+      <!-- Filters -->
+      <div class="project-filters fade-in" role="tablist" aria-label="Filtros de proyectos">
+        <button class="filter-btn active" data-filter="all" role="tab" aria-selected="true">Todos</button>
+        <button class="filter-btn" data-filter="Residencial" role="tab" aria-selected="false">Residencial</button>
+        <button class="filter-btn" data-filter="Comercial" role="tab" aria-selected="false">Comercial</button>
+        <button class="filter-btn" data-filter="Urbano" role="tab" aria-selected="false">Urbano</button>
+        <button class="filter-btn" data-filter="Interiorismo" role="tab" aria-selected="false">Interiorismo</button>
+      </div>
+
+      <!-- Grid -->
+      <div class="projects-grid" id="projectsGrid">
+
+        <article class="project-card fade-in" data-category="Residencial">
+          <div class="project-img">
+            <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80" alt="Residencia Norte" loading="lazy" />
+          </div>
+          <div class="project-overlay">
+            <div class="project-overlay-content">
+              <h3>Residencia Norte</h3>
+              <span>Residencial</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="project-card fade-in fade-in-delay-1" data-category="Comercial">
+          <div class="project-img">
+            <img src="https://images.unsplash.com/photo-1555529771-122b5b61e4a6?w=600&q=80" alt="Tienda Urbana ME" loading="lazy" />
+          </div>
+          <div class="project-overlay">
+            <div class="project-overlay-content">
+              <h3>Tienda Urbana ME</h3>
+              <span>Comercial</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="project-card fade-in fade-in-delay-2" data-category="Residencial">
+          <div class="project-img">
+            <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=80" alt="Casa Entre Pinos" loading="lazy" />
+          </div>
+          <div class="project-overlay">
+            <div class="project-overlay-content">
+              <h3>Casa Entre Pinos</h3>
+              <span>Residencial</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="project-card fade-in" data-category="Urbano">
+          <div class="project-img">
+            <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=600&q=80" alt="Desarrollo Costero" loading="lazy" />
+          </div>
+          <div class="project-overlay">
+            <div class="project-overlay-content">
+              <h3>Desarrollo Costero</h3>
+              <span>Urbano</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="project-card fade-in fade-in-delay-1" data-category="Residencial">
+          <div class="project-img">
+            <img src="https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=600&q=80" alt="Residencia Antranca" loading="lazy" />
+          </div>
+          <div class="project-overlay">
+            <div class="project-overlay-content">
+              <h3>Residencia Antranca</h3>
+              <span>Residencial</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="project-card fade-in fade-in-delay-2" data-category="Comercial">
+          <div class="project-img">
+            <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&q=80" alt="Edificio Urbano" loading="lazy" />
+          </div>
+          <div class="project-overlay">
+            <div class="project-overlay-content">
+              <h3>Edificio Urbano</h3>
+              <span>Comercial</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="project-card fade-in" data-category="Urbano">
+          <div class="project-img">
+            <img src="https://images.unsplash.com/photo-1519999482648-25049ddd37b1?w=600&q=80" alt="Rehabilitación Puerto" loading="lazy" />
+          </div>
+          <div class="project-overlay">
+            <div class="project-overlay-content">
+              <h3>Rehabilitación Puerto</h3>
+              <span>Urbano</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="project-card fade-in fade-in-delay-1" data-category="Interiorismo">
+          <div class="project-img">
+            <img src="https://images.unsplash.com/photo-1600210492493-0946911123ea?w=600&q=80" alt="Interior Minimalista" loading="lazy" />
+          </div>
+          <div class="project-overlay">
+            <div class="project-overlay-content">
+              <h3>Interior Minimalista</h3>
+              <span>Interiorismo</span>
+            </div>
+          </div>
+        </article>
+
+      </div><!-- /projects-grid -->
+    </div>
+  </section>
+
+  <!-- =========================================================
+       ESTUDIO
+  ========================================================= -->
+  <section id="estudio">
+    <div class="section-wrapper">
+      <div class="studio-grid">
+
+        <div class="studio-text fade-in">
+          <span class="section-label">El equipo</span>
+          <h2 class="section-title" style="margin-bottom:2rem;">ESTUDIO<br /><span style="color:var(--gray-mid);font-size:0.6em;font-weight:400;letter-spacing:0.05em;">Sobre alcubo³</span></h2>
+          <p>
+            Somos un equipo de arquitectos apasionados por crear espacios que trascienden lo funcional para convertirse en experiencias. Nuestra filosofía integra diseño contemporáneo, materiales nobles y una profunda comprensión del entorno.
+          </p>
+          <p>
+            Cada proyecto es una oportunidad de generar un vínculo único entre el espacio, sus habitantes y el paisaje. Trabajamos desde la escala urbana hasta el detalle constructivo con la misma dedicación y rigor.
+          </p>
+
+          <div class="studio-stats">
+            <div class="stat-item fade-in fade-in-delay-1">
+              <div class="stat-number">15+</div>
+              <div class="stat-label">Años de experiencia</div>
+            </div>
+            <div class="stat-item fade-in fade-in-delay-2">
+              <div class="stat-number">80+</div>
+              <div class="stat-label">Proyectos realizados</div>
+            </div>
+            <div class="stat-item fade-in fade-in-delay-3">
+              <div class="stat-number">3</div>
+              <div class="stat-label">Países</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="studio-image fade-in fade-in-delay-2">
+          <img
+            src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=800&q=80"
+            alt="Estudio alcubo³"
+            loading="lazy"
+          />
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SERVICIOS
+  ========================================================= -->
+  <section id="servicios">
+    <div class="section-wrapper">
+      <div class="section-header fade-in">
+        <span class="section-label">Qué hacemos</span>
+        <h2 class="section-title">SERVICIOS</h2>
+      </div>
+
+      <div class="services-grid">
+
+        <!-- Residencial -->
+        <div class="service-card fade-in">
+          <svg class="service-icon" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M6 20L22 6L38 20V40H28V28H16V40H6V20Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>
+          </svg>
+          <h3 class="service-title">Arquitectura Residencial</h3>
+          <p class="service-desc">Diseño de viviendas unifamiliares y conjuntos residenciales con identidad propia, respondiendo al entorno y a las necesidades de sus habitantes.</p>
+        </div>
+
+        <!-- Comercial -->
+        <div class="service-card fade-in fade-in-delay-1">
+          <svg class="service-icon" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect x="4" y="12" width="36" height="28" stroke="white" stroke-width="1.5"/>
+            <path d="M4 12L22 4L40 12" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>
+            <rect x="16" y="26" width="12" height="14" stroke="white" stroke-width="1.5"/>
+            <path d="M10 20h4M30 20h4M10 26h4M30 26h4" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <h3 class="service-title">Arquitectura Comercial</h3>
+          <p class="service-desc">Espacios comerciales que potencian la experiencia del usuario y la marca, integrando funcionalidad, estética y estrategia de marca.</p>
+        </div>
+
+        <!-- Interiorismo -->
+        <div class="service-card fade-in fade-in-delay-2">
+          <svg class="service-icon" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M6 34h32M10 34V20a2 2 0 012-2h20a2 2 0 012 2v14" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M16 34V26h12v8" stroke="white" stroke-width="1.5"/>
+            <path d="M6 26h6M32 26h6" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="22" cy="14" r="3" stroke="white" stroke-width="1.5"/>
+          </svg>
+          <h3 class="service-title">Interiorismo</h3>
+          <p class="service-desc">Diseño interior que armoniza estética, función y materialidad, creando ambientes únicos que reflejan la identidad de sus ocupantes.</p>
+        </div>
+
+        <!-- Urbanismo -->
+        <div class="service-card fade-in fade-in-delay-3">
+          <svg class="service-icon" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect x="4" y="20" width="10" height="20" stroke="white" stroke-width="1.5"/>
+            <rect x="17" y="12" width="10" height="28" stroke="white" stroke-width="1.5"/>
+            <rect x="30" y="16" width="10" height="24" stroke="white" stroke-width="1.5"/>
+            <path d="M2 40h40" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M7 20V14M20 12V6M33 16V10" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="2 2"/>
+          </svg>
+          <h3 class="service-title">Urbanismo</h3>
+          <p class="service-desc">Planificación y desarrollo de espacios urbanos con visión sostenible, buscando equilibrio entre densidad, habitabilidad y naturaleza.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       CONTACTO
+  ========================================================= -->
+  <section id="contacto">
+    <div class="section-wrapper">
+      <div class="section-header fade-in">
+        <span class="section-label">Trabajemos juntos</span>
+        <h2 class="section-title">CONTACTO</h2>
+      </div>
+
+      <div class="contact-grid">
+
+        <!-- Form -->
+        <div class="contact-form-side fade-in">
+          <p class="contact-tagline">¿Tenés un proyecto<br />en mente? Hablemos.</p>
+
+          <form id="contactForm" novalidate>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="contactName">Nombre</label>
+                <input type="text" id="contactName" name="name" placeholder="Tu nombre" required />
+              </div>
+              <div class="form-group">
+                <label for="contactEmail">Email</label>
+                <input type="email" id="contactEmail" name="email" placeholder="tu@email.com" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="contactPhone">Teléfono</label>
+              <input type="tel" id="contactPhone" name="phone" placeholder="+54 ..." />
+            </div>
+            <div class="form-group">
+              <label for="contactMsg">Mensaje</label>
+              <textarea id="contactMsg" name="message" placeholder="Contanos sobre tu proyecto..." required></textarea>
+            </div>
+            <button type="submit" class="btn-submit">
+              Enviar
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </form>
+
+          <div class="form-success" id="formSuccess" role="alert">
+            ✓ &nbsp;Mensaje enviado. Te contactaremos a la brevedad.
+          </div>
+        </div>
+
+        <!-- Info -->
+        <div class="contact-info-side fade-in fade-in-delay-2">
+          <div class="contact-image">
+            <img
+              src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=600&q=80"
+              alt="Proyecto alcubo³"
+              loading="lazy"
+            />
+          </div>
+
+          <div class="contact-info-items">
+            <div class="contact-info-item">
+              <span class="info-label">Email</span>
+              <span class="info-value">
+                <a href="mailto:hola@alcuboarq.com">hola@alcuboarq.com</a>
+              </span>
+            </div>
+            <div class="contact-info-item">
+              <span class="info-label">Instagram</span>
+              <span class="info-value">
+                <a href="https://instagram.com/alcuboarq" target="_blank" rel="noopener noreferrer">@alcuboarq</a>
+              </span>
+            </div>
+            <div class="contact-info-item">
+              <span class="info-label">Ubicación</span>
+              <span class="info-value">Argentina · Buenos Aires</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       FOOTER
+  ========================================================= -->
+  <footer>
+    <a href="#hero" class="footer-logo" aria-label="alcubo³ Arquitectos">
+      alcubo<sup>3</sup>
+    </a>
+
+    <nav class="footer-links" aria-label="Footer">
+      <a href="#proyectos">Proyectos</a>
+      <a href="#estudio">Estudio</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+
+    <a href="https://instagram.com/alcuboarq" target="_blank" rel="noopener noreferrer" class="footer-instagram">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <rect x="2" y="2" width="20" height="20" rx="5"/>
+        <circle cx="12" cy="12" r="4"/>
+        <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/>
+      </svg>
+      @alcuboarq
+    </a>
+
+    <p class="footer-copy">
+      © 2025 alcubo³ Arquitectos. Todos los derechos reservados.
+    </p>
+  </footer>
+
+  <!-- =========================================================
+       JAVASCRIPT
+  ========================================================= -->
+  <script>
+    /* ---- Scroll: header opacity ---- */
+    const header = document.getElementById('header');
+    const onScroll = () => {
+      header.classList.toggle('scrolled', window.scrollY > 40);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    /* ---- Hamburger menu ---- */
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const mobileMenu   = document.getElementById('mobileMenu');
+
+    const toggleMenu = (open) => {
+      hamburgerBtn.classList.toggle('open', open);
+      hamburgerBtn.setAttribute('aria-expanded', open);
+      if (open) {
+        mobileMenu.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      } else {
+        mobileMenu.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+    };
+
+    hamburgerBtn.addEventListener('click', () => {
+      const isOpen = mobileMenu.classList.contains('open');
+      toggleMenu(!isOpen);
+    });
+
+    document.querySelectorAll('.mobile-link').forEach(link => {
+      link.addEventListener('click', () => toggleMenu(false));
+    });
+
+    /* ---- IntersectionObserver: fade-in ---- */
+    const fadeEls = document.querySelectorAll('.fade-in');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    fadeEls.forEach(el => io.observe(el));
+
+    /* Trigger visible for above-fold hero elements immediately */
+    document.querySelectorAll('#hero .fade-in').forEach((el, i) => {
+      setTimeout(() => el.classList.add('visible'), i * 180);
+    });
+
+    /* ---- Project filters ---- */
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const projectCards = document.querySelectorAll('.project-card');
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => {
+          b.classList.remove('active');
+          b.setAttribute('aria-selected', 'false');
+        });
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');
+
+        const filter = btn.dataset.filter;
+        projectCards.forEach(card => {
+          const match = filter === 'all' || card.dataset.category === filter;
+          card.style.transition = 'opacity 0.4s, transform 0.4s';
+          if (match) {
+            card.style.opacity = '1';
+            card.style.transform = 'scale(1)';
+            card.style.display = 'block';
+          } else {
+            card.style.opacity = '0';
+            card.style.transform = 'scale(0.96)';
+            setTimeout(() => {
+              if (card.dataset.category !== filter && filter !== 'all') {
+                card.style.display = 'none';
+              }
+            }, 400);
+          }
+        });
+      });
+    });
+
+    /* ---- Contact form (simulated) ---- */
+    const contactForm = document.getElementById('contactForm');
+    const formSuccess = document.getElementById('formSuccess');
+
+    contactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const name    = document.getElementById('contactName').value.trim();
+      const email   = document.getElementById('contactEmail').value.trim();
+      const message = document.getElementById('contactMsg').value.trim();
+
+      if (!name || !email || !message) {
+        // Simple shake animation on empty required fields
+        [contactForm].forEach(el => {
+          el.style.animation = 'none';
+          el.offsetHeight; // reflow
+          el.style.animation = 'shake 0.4s ease';
+        });
+        return;
+      }
+
+      const btn = contactForm.querySelector('.btn-submit');
+      btn.textContent = 'Enviando...';
+      btn.disabled = true;
+
+      // Simulate async send
+      setTimeout(() => {
+        contactForm.style.display = 'none';
+        formSuccess.style.display = 'block';
+      }, 900);
+    });
+
+    /* Shake keyframe injected dynamically */
+    const shakeStyle = document.createElement('style');
+    shakeStyle.textContent = `
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        20% { transform: translateX(-6px); }
+        40% { transform: translateX(6px); }
+        60% { transform: translateX(-4px); }
+        80% { transform: translateX(4px); }
+      }
+    `;
+    document.head.appendChild(shakeStyle);
+
+    /* ---- Smooth scroll for all anchor links ---- */
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        const target = document.querySelector(link.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    /* ---- Active nav highlight on scroll ---- */
+    const sections = document.querySelectorAll('section[id], footer');
+    const navLinks  = document.querySelectorAll('.nav-links a');
+
+    const navObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          navLinks.forEach(link => {
+            link.style.color = link.getAttribute('href') === `#${id}`
+              ? 'var(--white)'
+              : '';
+          });
+        }
+      });
+    }, { threshold: 0.4 });
+
+    sections.forEach(s => navObserver.observe(s));
+  </script>
+
+</body>
+</html>
